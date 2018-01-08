@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "SDLHelpers.hpp"
 
 const int DEFAULT_WIDTH = 640;
@@ -12,6 +13,13 @@ int main(int argc, char** argv)
     {
         CTG::LogSDLError(std::cout, "SDL_Init");
         return 1;
+    }
+
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+	    CTG::LogSDLError(std::cout, "IMG_Init");
+	    SDL_Quit();
+	    return 1;
     }
 
     SDL_Window *window = 
@@ -44,7 +52,7 @@ int main(int argc, char** argv)
 
     //SDL_Texture *helloTex = CTG::LoadTextureBMP("hello.bmp", renderer);
     SDL_Texture *helloTex = CTG::LoadTexturePNG("hello.png", renderer);
-    
+
     if(helloTex == nullptr)
     {
         SDL_DestroyRenderer(renderer);

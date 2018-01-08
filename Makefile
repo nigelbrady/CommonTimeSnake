@@ -9,4 +9,6 @@ FILES := *.cpp
 build:
 	g++ $(FILES) -o $(APP_NAME) $(SDL_CFLAGS) $(SDL_LDFLAGS) $(SDL_EXT_LIBS)
 clean:
-	rm $(APP_NAME)
+	rm -f $(APP_NAME)
+run: clean build
+	./$(APP_NAME)
