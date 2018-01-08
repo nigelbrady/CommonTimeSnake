@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 namespace CTG
 {
@@ -9,7 +10,20 @@ namespace CTG
 
     /* Drawing helpers */
     void DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w=0, int h=0);
-    void DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect *clip, int x, int y, int w=0, int h=0);
+    void DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect *clip,
+                     int x, int y, int w=0, int h=0);
+
+    /* Text drawing helpers */
+    SDL_Texture * CreateTextureFromString(const std::string &text,
+                                          TTF_Font *font,
+                                          SDL_Color color,
+                                          SDL_Renderer *ren);
+
+    SDL_Texture * CreateTextureFromString(const std::string &text,
+                                          const std::string &fontFile,
+                                          SDL_Color color,
+                                          int fontSize,
+                                          SDL_Renderer *ren);                                      
 
     /* Logging helpers */
     void LogSDLError(std::ostream &os, const std::string &msg);

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "SDLHelpers.hpp"
 
 void CTG::LogSDLError(std::ostream &os, const std::string &msg)
@@ -77,3 +78,47 @@ void CTG::DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, 
 {
     CTG::DrawTexture(tex, ren, nullptr, x, y, w, h);
 }
+
+SDL_Texture * CTG::CreateTextureFromString(const std::string &text,
+                                           TTF_Font *font,
+                                           SDL_Color color,
+                                           SDL_Renderer *ren)
+{
+    SDL_Surface *surf = TTF_RenderText_Blended(font, text.c_str(), color);
+
+    if(surf == nullptr)
+    {
+        CTG::LogSDLError(std::cout, "TTF_RenderText_Blended");
+        return nullptr;
+    }
+
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, surf);
+
+    if(tex == nullptr)
+    {
+        CTG::LogSDLError(std::cout, "SDL_CreateTextureFromSurface");
+    }
+
+    SDL_FreeSurface(surf);
+    return tex;
+}
+
+SDL_Texture * CTG::CreateTextureFromString(const std::string &text,
+                                           const std::string &fontFile,
+                                           SDL_Color color,
+                                           int fontSize,
+                                           SDL_Renderer *ren)
+{
+    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
+
+    if(font == nullptr)
+    {
+        CTG::LogSDLError(std::cout, "TTF_OpenFont");
+        return nullptr;
+    }
+
+    SDL_Texture *tex = CTG::CreateTextureFromString(text, font, color, ren);
+
+    TTF_CloseFont(font);
+    return tex;
+}                                         

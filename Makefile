@@ -1,6 +1,6 @@
 SDL_CFLAGS := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
-SDL_EXT_LIBS := -lSDL2_image
+SDL_EXT_LIBS := -lSDL2_image -lSDL2_ttf
 
 APP_NAME := CommonTimeSnake
 
