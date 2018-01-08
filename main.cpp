@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     }
 
     //SDL_Texture *helloTex = CTG::LoadTextureBMP("hello.bmp", renderer);
-    SDL_Texture *helloTex = CTG::LoadTexturePNG("hello.png", renderer);
+    SDL_Texture *helloTex = CTG::LoadTexturePNG("image.png", renderer);
 
     if(helloTex == nullptr)
     {
@@ -61,12 +61,30 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    CTG::DrawTexture(helloTex, renderer, 0, 0);
-    SDL_RenderPresent(renderer);
+    SDL_Event e;
+    bool quit = false;
 
-    for(int i = 0; i < 10; i++)
+    while(!quit)
     {
-        SDL_Delay(1000);
+        while(SDL_PollEvent(&e))
+        {
+            if(e.type == SDL_QUIT)
+            {
+                quit = true;
+            }
+            else if(e.type == SDL_KEYDOWN)
+            {
+                quit = true;
+            }
+            else if(e.type == SDL_MOUSEBUTTONDOWN)
+            {
+                quit = true;
+            }
+        }
+
+        SDL_RenderClear(renderer);
+        CTG::DrawTexture(helloTex, renderer, 0, 0);
+        SDL_RenderPresent(renderer);
     }
 
     SDL_DestroyRenderer(renderer);
