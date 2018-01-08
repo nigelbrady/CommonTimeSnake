@@ -10,27 +10,15 @@ const std::string WINDOW_NAME = "Snake";
 
 int main(int argc, char** argv)
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    SDL_Window *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
+
+    if(CTG::StartSDL() != 0)
     {
-        CTG::LogSDLError(std::cout, "SDL_Init");
-        return 1;
+        std::cout << "Error setting up SDL, quitting..." << std::endl;
     }
 
-    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
-    {
-	    CTG::LogSDLError(std::cout, "IMG_Init");
-	    SDL_Quit();
-	    return 1;
-    }
-
-    if (TTF_Init() != 0)
-    {
-	    CTG::LogSDLError(std::cout, "TTF_Init");
-	    SDL_Quit();
-	    return 1;
-    }
-
-    SDL_Window *window = 
+    window = 
         SDL_CreateWindow(WINDOW_NAME.c_str(),
                          SDL_WINDOWPOS_CENTERED,
                          SDL_WINDOWPOS_CENTERED,
@@ -41,11 +29,11 @@ int main(int argc, char** argv)
     if(window == nullptr)
     {
         CTG::LogSDLError(std::cout, "SDL_CreateWindow");
-        SDL_Quit();
+        CTG::FinishSDL(renderer, window);
         return 1;
     }
 
-    SDL_Renderer *renderer = 
+    renderer = 
         SDL_CreateRenderer(window,
                            -1,
                             SDL_RENDERER_ACCELERATED  | SDL_RENDERER_PRESENTVSYNC);
@@ -53,8 +41,7 @@ int main(int argc, char** argv)
     if(renderer == nullptr)
     {
         CTG::LogSDLError(std::cout, "SDL_CreateRenderer");
-        SDL_DestroyWindow(window);
-        SDL_Quit();
+        CTG::FinishSDL(renderer, window);
         return 1;
     }
 
@@ -63,9 +50,7 @@ int main(int argc, char** argv)
 
     if(helloTex == nullptr)
     {
-        SDL_DestroyRenderer(renderer);
-	    SDL_DestroyWindow(window);
-        SDL_Quit();
+        CTG::FinishSDL(renderer, window);
         return 1;
     }
 
@@ -131,9 +116,6 @@ int main(int argc, char** argv)
         SDL_RenderPresent(renderer);
     }
 
-    SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    CTG::FinishSDL(renderer, window);
     return 0;
 }

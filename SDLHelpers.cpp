@@ -4,6 +4,45 @@
 #include <SDL2/SDL_ttf.h>
 #include "SDLHelpers.hpp"
 
+int CTG::StartSDL()
+{
+    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    {
+        CTG::LogSDLError(std::cout, "SDL_Init");
+        return 1;
+    }
+
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+	    CTG::LogSDLError(std::cout, "IMG_Init");
+	    SDL_Quit();
+	    return 1;
+    }
+
+    if (TTF_Init() != 0)
+    {
+	    CTG::LogSDLError(std::cout, "TTF_Init");
+	    SDL_Quit();
+	    return 1;
+    }
+
+    return 0;
+}
+
+void CTG::FinishSDL(SDL_Renderer *ren, SDL_Window *win)
+{
+    if(ren != nullptr)
+    {
+        SDL_DestroyRenderer(ren);
+    }
+    if(win != nullptr)
+    {
+        SDL_DestroyWindow(win);
+    }
+
+    SDL_Quit();
+}
+
 void CTG::LogSDLError(std::ostream &os, const std::string &msg)
 {
     os << msg << " error: " << SDL_GetError() << std::endl;

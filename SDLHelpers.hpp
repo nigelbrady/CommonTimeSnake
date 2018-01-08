@@ -4,6 +4,10 @@
 
 namespace CTG
 {
+    /* SDL Init and Cleanup */
+    int StartSDL();
+    void FinishSDL(SDL_Renderer *ren, SDL_Window *win);
+
     /* Texture loaders */
     SDL_Texture * LoadTextureBMP(const std::string &file, SDL_Renderer *renderer);
     SDL_Texture * LoadTexturePNG(const std::string &file, SDL_Renderer *renderer);
