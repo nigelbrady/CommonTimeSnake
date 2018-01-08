@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     }
 
     //SDL_Texture *helloTex = CTG::LoadTextureBMP("hello.bmp", renderer);
-    SDL_Texture *helloTex = CTG::LoadTexturePNG("image.png", renderer);
+    SDL_Texture *helloTex = CTG::LoadTexturePNG("circles.png", renderer);
 
     if(helloTex == nullptr)
     {
@@ -60,6 +60,22 @@ int main(int argc, char** argv)
         SDL_Quit();
         return 1;
     }
+
+    int iW = 100, iH = 100;
+    int x = DEFAULT_WIDTH / 2 - iW / 2;
+    int y = DEFAULT_HEIGHT / 2 - iH / 2;
+
+    SDL_Rect clips[4];
+
+    for(int i = 0; i < 4; i++)
+    {
+        clips[i].x = i / 2 * iW;
+        clips[i].y = i % 2 * iH;
+        clips[i].w = iW;
+        clips[i].h = iH;
+    }
+
+    int useClip = 0;
 
     SDL_Event e;
     bool quit = false;
@@ -74,16 +90,36 @@ int main(int argc, char** argv)
             }
             else if(e.type == SDL_KEYDOWN)
             {
-                quit = true;
-            }
-            else if(e.type == SDL_MOUSEBUTTONDOWN)
-            {
-                quit = true;
+                switch(e.key.keysym.sym)
+                {
+                    case SDLK_1:
+                        useClip = 0;
+                        break;
+
+                    case SDLK_2:
+                        useClip = 1;
+                        break;
+
+                    case SDLK_3:
+                        useClip = 2;
+                        break;
+
+                    case SDLK_4:
+                        useClip = 3;
+                        break;
+                    
+                    case SDLK_ESCAPE:
+                        quit = true;
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
 
         SDL_RenderClear(renderer);
-        CTG::DrawTexture(helloTex, renderer, 0, 0);
+        CTG::DrawTexture(helloTex, renderer, &clips[useClip], x, y);
         SDL_RenderPresent(renderer);
     }
 

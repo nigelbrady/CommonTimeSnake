@@ -9,6 +9,7 @@ namespace CTG
 
     /* Drawing helpers */
     void DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w=0, int h=0);
+    void DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect *clip, int x, int y, int w=0, int h=0);
 
     /* Logging helpers */
     void LogSDLError(std::ostream &os, const std::string &msg);

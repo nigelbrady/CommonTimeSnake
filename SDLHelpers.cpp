@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include "SDLHelpers.hpp"
 
 void CTG::LogSDLError(std::ostream &os, const std::string &msg)
@@ -43,7 +43,13 @@ SDL_Texture * CTG::LoadTexturePNG(const std::string &file, SDL_Renderer *rendere
     return tex;
 }
 
-void CTG::DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, int h)
+void CTG::DrawTexture(SDL_Texture *tex,
+                      SDL_Renderer *ren,
+                      SDL_Rect *clip,
+                      int x,
+                      int y,
+                      int w,
+                      int h)
 {
    SDL_Rect destRect;
    destRect.x = x;
@@ -54,10 +60,20 @@ void CTG::DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, 
        destRect.w = w;
        destRect.h = h;
    }
+   else if(clip != nullptr)
+   {
+       destRect.w = clip -> w;
+       destRect.h = clip -> h;
+   }
    else
    {
        SDL_QueryTexture(tex, NULL, NULL, &destRect.w, &destRect.h);
    }
 
-   SDL_RenderCopy(ren, tex, NULL, &destRect);
+   SDL_RenderCopy(ren, tex, clip, &destRect);
+}
+
+void CTG::DrawTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, int h)
+{
+    CTG::DrawTexture(tex, ren, nullptr, x, y, w, h);
 }
