@@ -92,8 +92,18 @@ int main(int argc, char** argv)
     SDL_Event e;
     bool quit = false;
 
+    int now = 0;
+    int then = SDL_GetTicks();
+    int deltaTime = 0;
+
     while(!quit)
     {
+        now = SDL_GetTicks();
+        deltaTime = now - then;
+        then = now;
+
+        //std::cout << "deltaTime: " << deltaTime << std::endl;
+
         while(SDL_PollEvent(&e))
         {
             if(e.type == SDL_QUIT)
@@ -137,6 +147,7 @@ int main(int argc, char** argv)
     }
 
     SDL_DestroyTexture(helloTex);
+    SDL_DestroyTexture(textImage);
     CTG::FinishSDL(renderer, window);
     return 0;
 }
