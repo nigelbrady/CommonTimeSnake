@@ -70,6 +70,25 @@ int main(int argc, char** argv)
 
     int useClip = 0;
 
+    SDL_Color color = { 255, 255, 255, 255 };
+    SDL_Texture *textImage = 
+        CTG::CreateTextureFromString("Hello, World",
+                                     "sample.ttf",
+                                     color,
+                                     64,
+                                      renderer);
+
+    if(textImage == nullptr)
+    {
+        CTG::FinishSDL(renderer, window);
+        return 1;
+    }
+
+    int tW, tH;
+    SDL_QueryTexture(textImage, NULL, NULL, &tW, &tH);
+    int tx = DEFAULT_WIDTH / 2 - tW / 2;
+    int ty = DEFAULT_HEIGHT / 2 - tH / 2;
+
     SDL_Event e;
     bool quit = false;
 
@@ -113,6 +132,7 @@ int main(int argc, char** argv)
 
         SDL_RenderClear(renderer);
         CTG::DrawTexture(helloTex, renderer, &clips[useClip], x, y);
+        CTG::DrawTexture(textImage, renderer, tx, ty);
         SDL_RenderPresent(renderer);
     }
 

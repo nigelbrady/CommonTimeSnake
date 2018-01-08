@@ -40,6 +40,8 @@ void CTG::FinishSDL(SDL_Renderer *ren, SDL_Window *win)
         SDL_DestroyWindow(win);
     }
 
+    IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 }
 
