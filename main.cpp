@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "SDLHelpers.hpp"
+#include "Resources.hpp"
 
 const int DEFAULT_WIDTH = 640;
 const int DEFAULT_HEIGHT = 480;
@@ -145,7 +146,7 @@ int main(int argc, char** argv)
         CTG::DrawTexture(textImage, renderer, tx, ty);
         SDL_RenderPresent(renderer);
     }
-
+        
     SDL_DestroyTexture(helloTex);
     SDL_DestroyTexture(textImage);
     CTG::FinishSDL(renderer, window);
