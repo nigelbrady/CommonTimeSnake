@@ -116,6 +116,7 @@ int main(int argc, char** argv)
         SDL_RenderPresent(renderer);
     }
 
+    SDL_DestroyTexture(helloTex);
     CTG::FinishSDL(renderer, window);
     return 0;
 }
