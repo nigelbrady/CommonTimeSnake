@@ -6,9 +6,9 @@ APP_NAME := CommonTimeSnake
 
 FILES := *.cpp
 
+run: clean build
+	./$(APP_NAME)
 build:
 	g++ $(FILES) -o $(APP_NAME) $(SDL_CFLAGS) $(SDL_LDFLAGS) $(SDL_EXT_LIBS)
 clean:
 	rm -f $(APP_NAME)
-run: clean build
-	./$(APP_NAME)
