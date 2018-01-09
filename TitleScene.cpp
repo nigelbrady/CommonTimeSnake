@@ -15,5 +15,6 @@ bool CTG::TitleScene::Event(SDL_Event e)
 
 void CTG::TitleScene::Draw(SDL_Renderer *ren)
 {
-    
+    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+    SDL_RenderClear(ren);
 }

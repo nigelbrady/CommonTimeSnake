@@ -38,12 +38,12 @@ void CTG::Scene::ChangeScene(CTG::Scene *nextScene)
 
 void CTG::Scene::OnSceneStarted()
 {
-
+    std::cout << "Enter scene: " << name << std::endl;
 }
 
 void CTG::Scene::OnSceneEnded()
 {
-    
+    std::cout << "Exit scene: " << name << std::endl;
 }
 
 CTG::Scene::Scene(std::string n)

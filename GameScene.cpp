@@ -46,7 +46,7 @@ void CTG::GameScene::Update(int delta)
 
 void CTG::GameScene::Draw(SDL_Renderer *ren)
 {
-    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
     SDL_RenderClear(ren);
 }
 

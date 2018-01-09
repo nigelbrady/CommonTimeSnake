@@ -5,6 +5,8 @@
 #include "SDLHelpers.hpp"
 #include "Resources.hpp"
 #include "Scene.hpp"
+#include "TitleScene.hpp"
+#include "GameScene.hpp"
 
 const int DEFAULT_WIDTH = 640;
 const int DEFAULT_HEIGHT = 480;
@@ -47,13 +49,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    if(!CTG::LoadScenes() || !CTG::LoadResources())
-    {
-        std::cout << "Failed to load required scenes/resources. Exiting..." << std::endl;
-        CTG::FinishSDL(renderer, window);
-        return 1;
-    }
-
     SDL_Event e;
     bool quit = false;
 
@@ -61,13 +56,19 @@ int main(int argc, char** argv)
     int then = SDL_GetTicks();
     int deltaTime = 0;
 
+    CTG::Scene::titleScene = new CTG::TitleScene();
+    CTG::Scene::gameScene = new CTG::GameScene();
+    CTG::Scene::currentScene = CTG::Scene::titleScene;
+
+    CTG::Scene *cur = CTG::Scene::currentScene;
+
     while(!quit)
     {
         now = SDL_GetTicks();
         deltaTime = now - then;
         then = now;
 
-        CTG::Scene *cur = CTG::Scene::currentScene;
+        cur = CTG::Scene::currentScene;
         //std::cout << "deltaTime: " << deltaTime << std::endl;
 
         while(SDL_PollEvent(&e))
@@ -83,17 +84,10 @@ int main(int argc, char** argv)
         }
 
         cur->Update(deltaTime);
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        
         cur->Draw(renderer);
-
         SDL_RenderPresent(renderer);
     }
 
-    CTG::DestroyScenes();
-    CTG::DestroyResources();
     CTG::FinishSDL(renderer, window);
     return 0;
 }
