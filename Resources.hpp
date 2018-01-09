@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-namespace CTGResources
+namespace CTG
 {
     class Resources
     {
@@ -40,4 +40,10 @@ namespace CTGResources
     const int SMALL_FONT_SIZE = 24;
 
     Resources *res = nullptr;
+
+    bool LoadResources();
+    void DestroyResources();
+
+    bool LoadScenes();
+    void DestroyScenes();
 }
