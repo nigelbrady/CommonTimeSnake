@@ -88,6 +88,8 @@ int main(int argc, char** argv)
         SDL_RenderPresent(renderer);
     }
 
+    delete CTG::Scene::titleScene;
+    delete CTG::Scene::gameScene;
     CTG::FinishSDL(renderer, window);
     return 0;
 }

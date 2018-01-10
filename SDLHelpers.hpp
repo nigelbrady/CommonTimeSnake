@@ -1,9 +1,32 @@
+#pragma once
+
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
 namespace CTG
 {
+    /* Sprites and objects */
+
+    typedef struct SDL_Sprite_st
+    {
+        SDL_Texture *texture;
+        SDL_Rect region;
+    } 
+    SDL_Sprite;
+
+    typedef struct SDL_GameObject_st
+    {
+        SDL_Sprite *sprite;
+        SDL_Rect bounds;
+        float x_pos_float;
+        float y_pos_float;
+    } 
+    SDL_GameObject;
+
+    void SDL_DrawSprite(SDL_Sprite& sp, SDL_Renderer *ren, int x, int y);
+    bool SDL_CheckCollision(const SDL_Rect& first, const SDL_Rect& second);
+    
     /* SDL Init and Cleanup */
     int StartSDL();
     void FinishSDL(SDL_Renderer *ren, SDL_Window *win);

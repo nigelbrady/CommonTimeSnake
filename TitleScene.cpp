@@ -6,8 +6,15 @@ bool CTG::TitleScene::Event(SDL_Event e)
 {
     if(e.type == SDL_KEYDOWN)
     {
-        ChangeScene(gameScene);
-        return true;
+        switch(e.key.keysym.sym)
+        {
+            case SDLK_ESCAPE:
+                return false;
+
+            default:
+                ChangeScene(CTG::Scene::gameScene);
+                return true;
+        }
     }
 
     return false;

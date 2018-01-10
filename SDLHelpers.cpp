@@ -162,4 +162,17 @@ SDL_Texture * CTG::CreateTextureFromString(const std::string &text,
 
     TTF_CloseFont(font);
     return tex;
-}                                         
+}
+
+void CTG::SDL_DrawSprite(SDL_Sprite& sp, SDL_Renderer *ren, int x, int y)
+{
+    CTG::DrawTexture(sp.texture, ren, &sp.region, x, y); 
+}
+
+bool CTG::SDL_CheckCollision(const SDL_Rect& rect1, const SDL_Rect& rect2)
+{
+    return rect1.x < rect2.x + rect2.w 
+        && rect1.x + rect1.w > rect2.x 
+        && rect1.y < rect2.y + rect2.h 
+        && rect1.h + rect1.y > rect2.y;
+}                                  
