@@ -8,10 +8,7 @@ bool CTG::TitleScene::Event(SDL_Event e)
     {
         switch(e.key.keysym.sym)
         {
-            case SDLK_ESCAPE:
-                return false;
-
-            default:
+            case SDLK_SPACE:
                 ChangeScene(CTG::Scene::gameScene);
                 return true;
         }

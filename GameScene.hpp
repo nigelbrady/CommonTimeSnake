@@ -30,7 +30,6 @@ namespace CTG
     class Snake
     {
         public:
-            int velocity;
             direction direction;
             std::vector<SnakePiece *> pieces;
 
@@ -39,7 +38,7 @@ namespace CTG
                 pieces.reserve(10);
             }
 
-            void Update(int deltaTime);
+            void Move(direction_t direction);
             void Grow();
             bool CheckDeath();
     };
@@ -52,6 +51,9 @@ namespace CTG
             int score;
 
             Snake snake;
+
+            float remainingCrawlTime;
+            float crawlTime;
 
             std::vector<SDL_GameObject> apples;
             std::vector<SDL_GameObject> spikes;

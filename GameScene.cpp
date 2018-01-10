@@ -1,8 +1,7 @@
 #include <iostream>
 #include "GameScene.hpp"
 
-CTG::SnakePiece * InitSnakePiece();
-CTG::SnakePiece * InitSnakePiece(CTG::SnakePiece *priorPiece);
+CTG::SnakePiece * InitSnakePiece(CTG::SnakePiece *priorPiece, CTG::direction_t direction);
 
 bool CTG::GameScene::Event(SDL_Event e)
 {
@@ -16,21 +15,26 @@ bool CTG::GameScene::Event(SDL_Event e)
 
             case SDLK_w:
             case SDLK_UP:
+                snake.direction = direction_t::up;
                 return true;
 
             case SDLK_s:
             case SDLK_DOWN:
+                snake.direction = direction_t::down;
                 return true;
 
             case SDLK_a:
             case SDLK_LEFT:
+                snake.direction = direction_t::left;
                 return true;
 
             case SDLK_d:
             case SDLK_RIGHT:
+                snake.direction = direction_t::right;
                 return true;
 
             case SDLK_SPACE:
+                snake.Grow();
                 return true;
 
             default:
@@ -45,7 +49,13 @@ void CTG::GameScene::Update(int delta)
 {
     if(state == game_state_t::running)
     {
-        snake.Update(delta);
+        remainingCrawlTime -= (delta/1000.0f);
+
+        if(remainingCrawlTime <= 0)
+        {
+            snake.Move(snake.direction);
+            remainingCrawlTime = crawlTime;
+        }
 
         if(snake.CheckDeath())
         {
@@ -81,7 +91,9 @@ void CTG::GameScene::ResetGame()
 {
     score = 0;
 
-    snake.velocity = 10;
+    crawlTime = 0.5;
+    remainingCrawlTime = crawlTime;
+
     snake.direction = direction::right;
     snake.pieces.clear();
     snake.Grow();
@@ -94,17 +106,19 @@ void CTG::GameScene::ResetGame()
 
 void CTG::Snake::Grow()
 {
+    std::cout << "Grow()!" << std::endl;
+
     SnakePiece *piece; 
     
     if(pieces.empty())
     {
-        piece = InitSnakePiece();
+        piece = InitSnakePiece(nullptr, direction);
         std::cout << "Head: " << piece->bounds.x << ", " << piece->bounds.y << "Size: " << pieces.size() << std::endl;
     }
     else
     {
         SnakePiece *back = pieces.back();
-        piece = InitSnakePiece(back);
+        piece = InitSnakePiece(back, direction);
     }
 
     pieces.push_back(piece);
@@ -115,21 +129,22 @@ bool CTG::Snake::CheckDeath()
     return false;
 }
 
-void CTG::Snake::Update(int delta)
+void CTG::Snake::Move(CTG::direction_t direction)
 {
     float dx, dy;
-    float dt = delta/1000.0f;
+
+    std::cout << "Move!" << std::endl;
 
     switch(direction)
     {
         case direction_t::up:
             dx = 0;
-            dy = 1;
+            dy = -1;
             break;
 
         case direction_t::down:
             dx = 0;
-            dy = -1;
+            dy = 1;
             break;
 
         case direction_t::left:
@@ -143,65 +158,81 @@ void CTG::Snake::Update(int delta)
             break;
     }
 
-    float last_pos_x = 0;
-    float last_pos_y = 0;
+    SnakePiece *head = pieces[0];
 
-    for(int i = 0; i < pieces.size(); i++)
+    if(pieces.size() == 1)
     {
-        SnakePiece *piece = pieces[i];
-
-        if(i == 0)
-        {
-            float oldX = piece->x_pos_float;
-            float oldY = piece->y_pos_float;
-
-            piece->x_pos_float +=  dx * velocity * dt;
-            piece->y_pos_float +=  dy * velocity * dt;
-
-            std::cout << "Old pos (" << oldX << "," << oldY << ")" << ", new pos (" << piece->x_pos_float << "," << piece->y_pos_float << ")" << std::endl;
-        }
-        else
-        {
-            piece->x_pos_float = last_pos_x;
-            piece->y_pos_float = last_pos_y;
-        }
-
-        piece->bounds.x = (int)piece->x_pos_float;
-        piece->bounds.y = (int)piece->y_pos_float;
-
-        last_pos_x = piece->x_pos_float;
-        last_pos_y = piece->y_pos_float;
+        head->x_pos_float += 8 * dx;
+        head->y_pos_float += 8 * dy;
+        head->bounds.x = (int)head->x_pos_float;
+        head->bounds.y = (int)head->y_pos_float;
     }
+    else
+    {
+        SnakePiece *tail = pieces.back();
+        pieces.pop_back();
+
+        tail->x_pos_float = head->x_pos_float + 8 * dx;
+        tail->y_pos_float = head->y_pos_float + 8 * dy;
+        tail->bounds.x = tail->x_pos_float;
+        tail->bounds.y = tail->y_pos_float;
+
+        pieces.insert(pieces.begin(), tail);
+    }   
 }
 
-CTG::SnakePiece * InitSnakePiece()
+CTG::SnakePiece * InitSnakePiece(CTG::SnakePiece *priorPiece, CTG::direction_t direction)
 {
     CTG::SnakePiece *piece = new CTG::SnakePiece;
-
     piece->sprite = nullptr;
 
-    piece->bounds.x = 640 / 2;
-    piece->bounds.y = 480 / 2;
-    piece->x_pos_float = piece->bounds.x;
-    piece->y_pos_float = piece->bounds.y;
-    piece->bounds.w = 16;
-    piece->bounds.h = 16;
 
-    return piece;
-}
+    if(priorPiece == nullptr)
+    {
+        piece->bounds.x = 640 / 2;
+        piece->bounds.y = 480 / 2;
+        piece->x_pos_float = piece->bounds.x;
+        piece->y_pos_float = piece->bounds.y;
+        piece->bounds.w = 16;
+        piece->bounds.h = 16;
+    }
+    else
+    {
+        float offsetX, offsetY;
 
-CTG::SnakePiece * InitSnakePiece(CTG::SnakePiece *priorPiece)
-{
-    CTG::SnakePiece *piece = new CTG::SnakePiece;
+        switch(direction)
+        {
+            case CTG::direction_t::up:
+                offsetX = 0;
+                offsetY = -1;
+                break;
 
-    piece->sprite = nullptr;
+            case CTG::direction_t::down:
+                offsetX = 0;
+                offsetY = 1;
+                break; 
 
-    piece->bounds.x = priorPiece->bounds.x;
-    piece->bounds.y = priorPiece->bounds.y;
-    piece->bounds.w = priorPiece->bounds.w;
-    piece->bounds.h = priorPiece->bounds.h;
-    piece->x_pos_float = priorPiece->x_pos_float;
-    piece->y_pos_float = priorPiece->y_pos_float;
+            case CTG::direction_t::left:
+                offsetX = 1;
+                offsetY = 0;
+                break;
+
+            case CTG::direction_t::right:
+                offsetX = -1;
+                offsetY = 0;
+                break;  
+        }
+
+        piece->bounds.x = priorPiece->bounds.x + offsetX * priorPiece->bounds.w;
+        piece->bounds.y = priorPiece->bounds.y + offsetY * priorPiece->bounds.h;
+        piece->bounds.w = priorPiece->bounds.w;
+        piece->bounds.h = priorPiece->bounds.h;
+        piece->x_pos_float = piece->bounds.x;
+        piece->y_pos_float = piece->bounds.y;
+
+        std::cout << "Prev piece: " << priorPiece->bounds.x << "," << priorPiece->bounds.y << "Next piece: " << piece->bounds.x << ", " << piece->bounds.y << std::endl;
+
+    }
 
     return piece;
 }
