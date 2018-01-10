@@ -52,7 +52,8 @@ void CTG::GameScene::Draw(SDL_Renderer *ren)
 
 void CTG::GameScene::OnSceneStarted()
 {
-
+    CTG::Scene::Scene::OnSceneStarted();
+    CTG::GameScene::ResetGame();
 }
 
 void CTG::GameScene::ResetGame()

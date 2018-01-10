@@ -30,10 +30,14 @@ void CTG::Scene::Draw(SDL_Renderer *ren)
 void CTG::Scene::ChangeScene(CTG::Scene *nextScene)
 {
     CTG::Scene *leaving = currentScene;
-    leaving->OnSceneEnded();
 
-    currentScene = nextScene;
+    if(leaving != nullptr)
+    {
+        leaving->OnSceneEnded();
+    }
+
     nextScene -> OnSceneStarted();
+    currentScene = nextScene;
 }
 
 void CTG::Scene::OnSceneStarted()

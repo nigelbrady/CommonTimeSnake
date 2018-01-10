@@ -26,7 +26,7 @@ namespace CTG
             virtual void OnSceneStarted();
             virtual void OnSceneEnded();
 
-            void ChangeScene(Scene *newScene);
+            static void ChangeScene(Scene *newScene);
     };
 
     

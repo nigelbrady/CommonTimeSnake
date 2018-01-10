@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
     CTG::Scene::titleScene = new CTG::TitleScene();
     CTG::Scene::gameScene = new CTG::GameScene();
-    CTG::Scene::currentScene = CTG::Scene::titleScene;
+    CTG::Scene::ChangeScene(CTG::Scene::titleScene);
 
     CTG::Scene *cur = CTG::Scene::currentScene;
 
