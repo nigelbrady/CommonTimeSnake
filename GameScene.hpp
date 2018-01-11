@@ -3,20 +3,12 @@
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
-#include "Scene.hpp"
 #include "SDLHelpers.hpp"
+#include "Scene.hpp"
+#include "Snake.hpp"
 
 namespace CTG
 {
-    typedef enum direction_t
-    {
-        up,
-        down,
-        left,
-        right
-    }
-    direction;
-
     typedef enum game_state_t
     {
         running,
@@ -26,22 +18,6 @@ namespace CTG
     game_state;
 
     typedef SDL_GameObject SnakePiece;
-
-    class Snake
-    {
-        public:
-            direction direction;
-            std::vector<SnakePiece *> pieces;
-
-            Snake()
-            {
-                pieces.reserve(10);
-            }
-
-            void Move(direction_t direction);
-            void Grow();
-            bool CheckDeath();
-    };
     
     class GameScene : public Scene
     {
