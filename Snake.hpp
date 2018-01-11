@@ -31,7 +31,7 @@ namespace CTG
 
             Snake()
             {
-                velocity = 10;
+                velocity = 20;
                 pieces.reserve(10);
             }
 

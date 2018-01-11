@@ -79,8 +79,8 @@ void CTG::Snake::Update(int delta)
         float xDiff = target.x - piece->x_pos_float;
         float yDiff = target.y - piece->y_pos_float;
 
-        float xMul = xDiff < 0 ? -1 : 1;
-        float yMul = yDiff < 0 ? -1 : 1;
+        float xMul = xDiff == 0 ? 0 : xDiff/abs(xDiff);
+        float yMul = yDiff == 0 ? 0 : yDiff/abs(yDiff);
 
         if (i == 0)
         {
