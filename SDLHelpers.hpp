@@ -24,6 +24,13 @@ namespace CTG
     } 
     SDL_GameObject;
 
+    typedef struct SDL_Point_Float_t
+    {
+        float x;
+        float y;
+    }
+    SDL_Point_Float;
+
     void SDL_DrawSprite(SDL_Sprite& sp, SDL_Renderer *ren, int x, int y);
     bool SDL_CheckCollision(const SDL_Rect& first, const SDL_Rect& second);
     

@@ -47,6 +47,7 @@ void CTG::GameScene::Update(int delta)
 {
     if(state == game_state_t::running)
     {
+        /* 
         remainingCrawlTime -= (delta/1000.0f);
 
         if(remainingCrawlTime <= 0)
@@ -54,6 +55,9 @@ void CTG::GameScene::Update(int delta)
             snake.Move(snake.direction);
             remainingCrawlTime = crawlTime;
         }
+        */
+
+        snake.Update(delta);
 
         if(snake.CheckDeath())
         {

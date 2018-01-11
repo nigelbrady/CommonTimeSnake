@@ -1,4 +1,4 @@
-COMPILER_FLAGS := -std=c++11 -Wall -O2
+COMPILER_FLAGS := -O2
 SDL_CFLAGS := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 SDL_EXT_LIBS := -lSDL2_image -lSDL2_ttf

@@ -3,12 +3,15 @@
 #include <iostream>
 #include <vector>
 #include "SDLHelpers.hpp"
-
+ 
 namespace CTG
 {
     typedef SDL_GameObject SnakePiece;
 
-    typedef enum direction_t {
+    extern const int SEGMENT_SIZE;
+
+    typedef enum direction_t 
+    {
         up,
         down,
         left,
@@ -17,17 +20,24 @@ namespace CTG
 
     class Snake
     {
-    public:
-        direction direction;
-        std::vector<SnakePiece *> pieces;
+        private:
+            void UpdateTargetLocations();
 
-        Snake()
-        {
-            pieces.reserve(10);
-        }
+        public:
+            int velocity;
+            direction direction;
+            std::vector<SnakePiece *> pieces;
+            std::vector<SDL_Point> targetLocations;
 
-        void Move(direction_t direction);
-        void Grow();
-        bool CheckDeath();
+            Snake()
+            {
+                velocity = 20;
+                pieces.reserve(10);
+            }
+
+            void Move(direction_t direction);
+            void Update(int delta);
+            void Grow();
+            bool CheckDeath();
     };
 }
