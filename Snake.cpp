@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "Snake.hpp"
+#include "SDLHelpers.hpp"
 
 namespace CTG
 {
@@ -59,7 +60,6 @@ void CTG::Snake::Grow()
 void CTG::Snake::Update(int delta)
 {
     //std::cout << "Update: " << delta << std::endl;
-
     float dt = delta / 1000.0f;
 
     SDL_Point d;
@@ -82,15 +82,28 @@ void CTG::Snake::Update(int delta)
         float xMul = xDiff < 0 ? -1 : 1;
         float yMul = yDiff < 0 ? -1 : 1;
 
-        if (i == 0 && abs(xDiff) <= 0.1 && abs(yDiff) <= 0.1)
+        if (i == 0)
         {
-            /* std::cout << "Head needs update: (" << piece->x_pos_float << ", " << piece->y_pos_float << ") "
+            SDL_Point curLoc;
+            curLoc.x = piece->bounds.x;
+            curLoc.y = piece->bounds.y;
+
+            double dist = SDL_Point_Distance(curLoc, target);
+
+            if(abs(xDiff) < 0.1 && abs(yDiff) < 0.1)
+            {
+                UpdateTargetLocations();
+                target = targetLocations[i];
+                /* std::cout << "Head needs update: (" << piece->x_pos_float << ", " << piece->y_pos_float << ") "
                       << " target: (" << target.x << "," << target.y << ")" << std::endl; */
-            UpdateTargetLocations();
+            }
         }
 
         float oldX = piece->x_pos_float;
         float oldY = piece->y_pos_float;
+
+        //piece->x_pos_float += xMul * velocity * dt;
+        //piece->y_pos_float += yMul * velocity * dt;
 
         piece->x_pos_float += xMul * velocity * dt;
         piece->y_pos_float += yMul * velocity * dt;
@@ -98,7 +111,8 @@ void CTG::Snake::Update(int delta)
         piece->bounds.x = round(piece->x_pos_float);
         piece->bounds.y = round(piece->y_pos_float);
 
-        std::cout << "Piece: " << i << ", old (" << oldX << "," << oldY << "), now: (" << piece->x_pos_float << ", " << piece->y_pos_float << ")"
+        if(i == 0)
+            std::cout << "Piece: " << i << ", old (" << oldX << "," << oldY << "), now: (" << piece->bounds.x << ", " << piece->bounds.y << ")"
                   << " target: (" << target.x << "," << target.y << ")" << std::endl; 
     }
 }
@@ -150,7 +164,7 @@ void CTG::Snake::UpdateTargetLocations()
             tLoc.y = SEGMENT_SIZE * (pieces[i]->bounds.y/SEGMENT_SIZE) + (d.y * SEGMENT_SIZE);
             targetLocations[i] = tLoc;
 
-            std::cout << "Set head target location to: " << targetLocations[i].x << "," << targetLocations[i].y << ", tLoc:" << tLoc.x << ", " << tLoc.y << ", direction: " << direction << "dx: " << d.x << ", dy: " << d.y << std::endl;
+            std::cout << "Set head target location to: " << targetLocations[i].x << "," << targetLocations[i].y << ", tLoc:" << tLoc.x << ", " << tLoc.y << ", direction: " << direction << ", dx: " << d.x << ", dy: " << d.y << std::endl;
         }
         else
         {

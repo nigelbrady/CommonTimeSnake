@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <cmath>
 #include "SDLHelpers.hpp"
 
 int CTG::StartSDL()
@@ -175,4 +176,19 @@ bool CTG::SDL_CheckCollision(const SDL_Rect& rect1, const SDL_Rect& rect2)
         && rect1.x + rect1.w > rect2.x 
         && rect1.y < rect2.y + rect2.h 
         && rect1.h + rect1.y > rect2.y;
-}                                  
+}
+
+double CTG::SDL_Point_Distance(const SDL_Point& p1, const SDL_Point& p2)
+{
+    return sqrt(pow(p2.x - p1.x, 2) + pow(p2.x - p1.x, 2)); 
+}
+
+float CTG::SDL_Lerp(float from, float to, float t)
+{
+    return (1 - t) * from + t * to;
+}          
+
+double CTG::SDL_Lerp(double from, double to, double t)
+{
+    return (1 - t) * from + t * to;
+}                               

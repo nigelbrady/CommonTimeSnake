@@ -21,6 +21,8 @@ namespace CTG
         SDL_Rect bounds;
         float x_pos_float;
         float y_pos_float;
+        float x_pos_double;
+        float y_pos_double;
     } 
     SDL_GameObject;
 
@@ -61,4 +63,10 @@ namespace CTG
 
     /* Logging helpers */
     void LogSDLError(std::ostream &os, const std::string &msg);
+
+    /* SDL Point helpers */
+    double SDL_Point_Distance(const SDL_Point& p1, const SDL_Point& p2);
+
+    float SDL_Lerp(float, float, float);
+    double SDL_Lerp(double, double, double);
 }
