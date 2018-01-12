@@ -7,45 +7,44 @@
 #include "Scene.hpp"
 #include "Snake.hpp"
 
+typedef enum game_state_t {
+    running,
+    paused,
+    game_over
+} game_state;
+
 namespace CTG
 {
-    typedef enum game_state_t
+
+typedef SDL_GameObject SnakePiece;
+
+class GameScene : public Scene
+{
+  private:
+    game_state state;
+
+    int score;
+
+    Snake snake;
+
+    float remainingCrawlTime;
+    float crawlTime;
+
+    std::vector<SDL_GameObject> apples;
+    std::vector<SDL_GameObject> spikes;
+
+  public:
+    GameScene() : Scene("GameScene")
     {
-        running,
-        paused,
-        game_over
+        ResetGame();
     }
-    game_state;
 
-    typedef SDL_GameObject SnakePiece;
-    
-    class GameScene : public Scene
-    {
-        private:
-            game_state state;
+    bool Event(SDL_Event e);
+    void Update(int delta);
+    void Draw(SDL_Renderer *ren);
 
-            int score;
+    void OnSceneStarted();
 
-            Snake snake;
-
-            float remainingCrawlTime;
-            float crawlTime;
-
-            std::vector<SDL_GameObject> apples;
-            std::vector<SDL_GameObject> spikes;
-
-        public:
-            GameScene() : Scene("GameScene")
-            {
-                ResetGame();
-            }
-
-            bool Event(SDL_Event e);
-            void Update(int delta);
-            void Draw(SDL_Renderer *ren);
-
-            void OnSceneStarted();
-
-            void ResetGame();
-    };
+    void ResetGame();
+};
 }

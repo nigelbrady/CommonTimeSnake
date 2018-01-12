@@ -67,6 +67,7 @@ namespace CTG
     /* SDL Point helpers */
     double SDL_Point_Distance(const SDL_Point& p1, const SDL_Point& p2);
 
-    float SDL_Lerp(float, float, float);
-    double SDL_Lerp(double, double, double);
+    /* Linear interpolation helper */
+    float SDL_Lerp(float from, float to, float t);
+    double SDL_Lerp(double from, double to, double t);
 }

@@ -183,12 +183,12 @@ double CTG::SDL_Point_Distance(const SDL_Point& p1, const SDL_Point& p2)
     return sqrt(pow(p2.x - p1.x, 2) + pow(p2.x - p1.x, 2)); 
 }
 
-float CTG::SDL_Lerp(float from, float to, float t)
+float CTG::SDL_Lerp(float v0, float v1, float t) 
 {
-    return (1 - t) * from + t * to;
-}          
+  return (1 - t) * v0 + t * v1;
+}      
 
-double CTG::SDL_Lerp(double from, double to, double t)
+double CTG::SDL_Lerp(double v0, double v1, double t) 
 {
-    return (1 - t) * from + t * to;
-}                               
+  return (1 - t) * v0 + t * v1;
+}                                

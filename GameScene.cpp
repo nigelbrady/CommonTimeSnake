@@ -13,22 +13,22 @@ bool CTG::GameScene::Event(SDL_Event e)
 
             case SDLK_w:
             case SDLK_UP:
-                snake.direction = direction_t::up;
+                snake.direction = up;
                 return true;
 
             case SDLK_s:
             case SDLK_DOWN:
-                snake.direction = direction_t::down;
+                snake.direction = down;
                 return true;
 
             case SDLK_a:
             case SDLK_LEFT:
-                snake.direction = direction_t::left;
+                snake.direction = left;
                 return true;
 
             case SDLK_d:
             case SDLK_RIGHT:
-                snake.direction = direction_t::right;
+                snake.direction = right;
                 return true;
 
             case SDLK_SPACE:
@@ -45,7 +45,7 @@ bool CTG::GameScene::Event(SDL_Event e)
 
 void CTG::GameScene::Update(int delta)
 {
-    if(state == game_state_t::running)
+    if(state == running)
     {
         /* 
         remainingCrawlTime -= (delta/1000.0f);
@@ -61,7 +61,7 @@ void CTG::GameScene::Update(int delta)
 
         if(snake.CheckDeath())
         {
-            state = game_state_t::game_over;
+            state = game_over;
         }
     }
 }
@@ -96,12 +96,12 @@ void CTG::GameScene::ResetGame()
     crawlTime = 0.10;
     remainingCrawlTime = crawlTime;
 
-    snake.direction = direction::right;
+    snake.direction = right;
     snake.pieces.clear();
     snake.Grow();
     
     apples.clear();
     spikes.clear();
 
-    state = game_state_t::running;
+    state = running;
 }

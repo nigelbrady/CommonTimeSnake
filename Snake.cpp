@@ -9,16 +9,16 @@ namespace CTG
 const int SEGMENT_SIZE = 16;
 }
 
-void DirectionToPoint(SDL_Point &, CTG::direction_t &);
+void DirectionToPoint(SDL_Point &, direction_t &);
 
 void CTG::Snake::Grow()
 {
-    //std::cout << "Grow()!" << std::endl;
+    std::cout << "Grow()!" << std::endl;
 
     SnakePiece *piece = new CTG::SnakePiece;
     piece->sprite = nullptr;
 
-    SDL_Point pieceTargetLocation;
+    target_location ptLocation;
 
     if (pieces.empty())
     {
@@ -32,8 +32,16 @@ void CTG::Snake::Grow()
         SDL_Point d;
         DirectionToPoint(d, direction);
 
-        pieceTargetLocation.x = piece->bounds.x + d.x * SEGMENT_SIZE;
-        pieceTargetLocation.y = piece->bounds.y + d.y * SEGMENT_SIZE;
+        ptLocation.from_x = piece->bounds.x;
+        ptLocation.from_y = piece->bounds.y;
+        ptLocation.to_x = piece->bounds.x + d.x * SEGMENT_SIZE;
+        ptLocation.to_y = piece->bounds.y + d.y * SEGMENT_SIZE;
+        ptLocation.current_time = 0;
+        ptLocation.max_time = 1000;
+
+        std::cout << "targetLoc from: (" << ptLocation.from_x
+            << ", " << ptLocation.from_y << ") to ("
+            << ptLocation.to_x << ", " << ptLocation.to_y << ")" << std::endl;
     }
     else
     {
@@ -46,21 +54,19 @@ void CTG::Snake::Grow()
         piece->x_pos_float = piece->bounds.x;
         piece->y_pos_float = piece->bounds.y;
 
-        pieceTargetLocation.x = targetLocations[pieces.size() - 1].x;
-        pieceTargetLocation.y = targetLocations[pieces.size() - 1].y;
-
-        pieceTargetLocation.x = -1;
-        pieceTargetLocation.y = -1;
+        ptLocation.from_x = -1;
+        ptLocation.from_y = -1;
+        ptLocation.to_x = -1;
+        ptLocation.to_y = -1;
     }
 
     pieces.push_back(piece);
-    targetLocations.push_back(pieceTargetLocation);
+    targetLocations.push_back(ptLocation);
 }
 
 void CTG::Snake::Update(int delta)
 {
     //std::cout << "Update: " << delta << std::endl;
-    float dt = delta / 1000.0f;
 
     SDL_Point d;
     DirectionToPoint(d, direction);
@@ -68,52 +74,39 @@ void CTG::Snake::Update(int delta)
     for (int i = 0; i < pieces.size(); i++)
     {
         SnakePiece *piece = pieces[i];
-        SDL_Point target = targetLocations[i];
 
-        if (target.x == -1 || target.y == -1)
+        if (targetLocations[i].to_x == -1 
+            || targetLocations[i].to_y == -1)
         {
             std::cout << "Piece: " << i << " not updating..." << std::endl;
             continue;
         }
+        
+        targetLocations[i].current_time = 
+            std::min(targetLocations[i].current_time + delta,
+                     targetLocations[i].max_time) ;
 
-        float xDiff = target.x - piece->x_pos_float;
-        float yDiff = target.y - piece->y_pos_float;
-
-        float xMul = xDiff == 0 ? 0 : xDiff/abs(xDiff);
-        float yMul = yDiff == 0 ? 0 : yDiff/abs(yDiff);
-
-        if (i == 0)
-        {
-            SDL_Point curLoc;
-            curLoc.x = piece->bounds.x;
-            curLoc.y = piece->bounds.y;
-
-            double dist = SDL_Point_Distance(curLoc, target);
-
-            if(abs(xDiff) < 0.1 && abs(yDiff) < 0.1)
-            {
-                UpdateTargetLocations();
-                target = targetLocations[i];
-                /* std::cout << "Head needs update: (" << piece->x_pos_float << ", " << piece->y_pos_float << ") "
-                      << " target: (" << target.x << "," << target.y << ")" << std::endl; */
-            }
-        }
+        float t = targetLocations[i].current_time / targetLocations[i].max_time;
 
         float oldX = piece->x_pos_float;
         float oldY = piece->y_pos_float;
 
-        //piece->x_pos_float += xMul * velocity * dt;
-        //piece->y_pos_float += yMul * velocity * dt;
-
-        piece->x_pos_float += xMul * velocity * dt;
-        piece->y_pos_float += yMul * velocity * dt;
+        piece->x_pos_float = SDL_Lerp(targetLocations[i].from_x, targetLocations[i].to_x, t);
+        piece->y_pos_float = SDL_Lerp(targetLocations[i].from_y, targetLocations[i].to_y, t);
 
         piece->bounds.x = round(piece->x_pos_float);
         piece->bounds.y = round(piece->y_pos_float);
 
-        if(i == 0)
-            std::cout << "Piece: " << i << ", old (" << oldX << "," << oldY << "), now: (" << piece->bounds.x << ", " << piece->bounds.y << ")"
-                  << " target: (" << target.x << "," << target.y << ")" << std::endl; 
+        std::cout << "Piece: " << i << " from (" << oldX << ", " << oldY
+            << ") to (" << piece->x_pos_float << ", " << piece ->y_pos_float << ") "
+                << " target: (" << targetLocations[i].to_x << ", " << targetLocations[i].to_y
+                << ") ct: " << targetLocations[i].current_time << ", mt: " << targetLocations[i].max_time << std::endl;
+
+        if(i == 0 && t >= 1)
+        {
+            UpdateTargetLocations();
+        }
+        
     }
 }
 
@@ -122,7 +115,7 @@ bool CTG::Snake::CheckDeath()
     return false;
 }
 
-void CTG::Snake::Move(CTG::direction_t direction)
+void CTG::Snake::Move(direction_t direction)
 {
     SDL_Point d;
     DirectionToPoint(d, direction);
@@ -156,44 +149,52 @@ void CTG::Snake::UpdateTargetLocations()
     {
         if (i == 0)
         {
+            SnakePiece *piece = pieces[i];
+
             SDL_Point d;
             DirectionToPoint(d, direction);
 
-            SDL_Point tLoc;
-            tLoc.x = SEGMENT_SIZE * (pieces[i]->bounds.x/SEGMENT_SIZE) + (d.x * SEGMENT_SIZE);
-            tLoc.y = SEGMENT_SIZE * (pieces[i]->bounds.y/SEGMENT_SIZE) + (d.y * SEGMENT_SIZE);
-            targetLocations[i] = tLoc;
+            targetLocations[i].from_x = piece->bounds.x;
+            targetLocations[i].from_y = piece->bounds.y;
+            targetLocations[i].to_x = piece->bounds.x + (d.x * SEGMENT_SIZE);
+            targetLocations[i].to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);;
+            targetLocations[i].current_time = 0.0f;
+            targetLocations[i].max_time = 1000.0f;
 
-            std::cout << "Set head target location to: " << targetLocations[i].x << "," << targetLocations[i].y << ", tLoc:" << tLoc.x << ", " << tLoc.y << ", direction: " << direction << ", dx: " << d.x << ", dy: " << d.y << std::endl;
+            std::cout << "Updated. Current: (" << targetLocations[i].from_x << ", " << targetLocations[i].to_y 
+                << ", Set head target location to: " << targetLocations[i].to_x << "," << targetLocations[i].to_y 
+                << ", direction: " << direction << ", dx: " << d.x << ", dy: " << d.y << std::endl;
         }
         else
         {
             SnakePiece *prev = pieces[i - 1];
             targetLocations[i] = targetLocations[i - 1];
+            targetLocations[i].current_time = 0.0f;
+            targetLocations[i].max_time = 1000.0f;
         }
     }
 }
 
-void DirectionToPoint(SDL_Point &pt, CTG::direction_t &dir)
+void DirectionToPoint(SDL_Point &pt, direction_t &dir)
 {
     switch (dir)
     {
-    case CTG::direction_t::up:
+    case up:
         pt.x = 0;
         pt.y = -1;
         break;
 
-    case CTG::direction_t::down:
+    case down:
         pt.x = 0;
         pt.y = 1;
         break;
 
-    case CTG::direction_t::left:
+    case left:
         pt.x = -1;
         pt.y = 0;
         break;
 
-    case CTG::direction_t::right:
+    case right:
         pt.x = 1;
         pt.y = 0;
         break;

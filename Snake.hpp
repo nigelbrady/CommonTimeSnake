@@ -4,19 +4,29 @@
 #include <vector>
 #include "SDLHelpers.hpp"
  
+typedef enum direction_t {
+    up,
+    down,
+    left,
+    right
+} direction;
+
+typedef struct target_location_st{
+    float current_time;
+    float max_time;
+
+    float from_x;
+    float from_y;
+
+    float to_x;
+    float to_y;
+} target_location;
+
 namespace CTG
 {
     typedef SDL_GameObject SnakePiece;
 
     extern const int SEGMENT_SIZE;
-
-    typedef enum direction_t 
-    {
-        up,
-        down,
-        left,
-        right
-    } direction;
 
     class Snake
     {
@@ -27,7 +37,7 @@ namespace CTG
             int velocity;
             direction direction;
             std::vector<SnakePiece *> pieces;
-            std::vector<SDL_Point> targetLocations;
+            std::vector<target_location> targetLocations;
 
             Snake()
             {
