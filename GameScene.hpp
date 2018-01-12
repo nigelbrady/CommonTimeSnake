@@ -30,14 +30,13 @@ class GameScene : public Scene
     float remainingCrawlTime;
     float crawlTime;
 
-    std::vector<SDL_GameObject> apples;
-    std::vector<SDL_GameObject> spikes;
+    SDL_GameObject apple;
 
+    void PlaceApple();
+    bool AppleEaten();
+    
   public:
-    GameScene() : Scene("GameScene")
-    {
-        
-    }
+    GameScene() : Scene("GameScene"){}
 
     bool Event(SDL_Event e);
     void Update(int delta);

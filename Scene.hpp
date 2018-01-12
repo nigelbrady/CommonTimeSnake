@@ -13,6 +13,9 @@ namespace CTG
         public:
             Scene(std::string name);
 
+            static int sceneWidth;
+            static int sceneHeight;
+
             static Scene *currentScene;
             static Scene *titleScene;
             static Scene *gameScene;

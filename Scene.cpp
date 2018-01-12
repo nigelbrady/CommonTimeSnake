@@ -2,6 +2,9 @@
 #include <SDL2/SDL.h>
 #include "Scene.hpp"
 
+int CTG::Scene::sceneWidth = 640;
+int CTG::Scene::sceneHeight = 480;
+
 CTG::Scene* CTG::Scene::currentScene = nullptr;
 CTG::Scene* CTG::Scene::titleScene = nullptr;
 CTG::Scene* CTG::Scene::gameScene = nullptr;

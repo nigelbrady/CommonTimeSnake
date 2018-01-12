@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <ctime>
 #include "SDLHelpers.hpp"
 #include "Resources.hpp"
 #include "Scene.hpp"
@@ -48,6 +49,10 @@ int main(int argc, char** argv)
         CTG::FinishSDL(renderer, window);
         return 1;
     }
+
+    time_t sTime;
+    time(&sTime);
+    srand(sTime);
 
     SDL_Event e;
     bool quit = false;

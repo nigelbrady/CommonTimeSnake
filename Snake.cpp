@@ -6,7 +6,7 @@
 
 namespace CTG
 {
-const int SEGMENT_SIZE = 16;
+const int SEGMENT_SIZE = 20;
 }
 
 void DirectionToPoint(SDL_Point &, direction_t &);
@@ -157,8 +157,6 @@ void CTG::Snake::UpdateTargetLocations()
             targetLocations[i]->from_y = piece->bounds.y;
             targetLocations[i]->to_x = piece->bounds.x + (d.x * SEGMENT_SIZE);
             targetLocations[i]->to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);;
-            targetLocations[i]->current_time = 0.0f;
-            targetLocations[i]->max_time = 1000.0f;
 
             /* std::cout << "Updated. Current: (" << targetLocations[i].from_x << ", " << targetLocations[i].to_y 
                 << ", Set head target location to: " << targetLocations[i].to_x << "," << targetLocations[i].to_y 
@@ -176,10 +174,27 @@ void CTG::Snake::UpdateTargetLocations()
             targetLocations[i]->from_y = targetLocations[i-1]->from_y;
             targetLocations[i]->to_x = targetLocations[i-1]->to_x;
             targetLocations[i]->to_y = targetLocations[i-1]->to_y;
-            targetLocations[i]->current_time = 0.0f;
-            targetLocations[i]->max_time = 1000.0f;
+
+        }
+
+        targetLocations[i]->current_time = 0.0f;
+        targetLocations[i]->max_time = 1000.0f;
+    }
+}
+
+bool CTG::Snake::CheckCollisionWithSnake(SDL_Rect& r)
+{
+    for(int i = 0; i < pieces.size(); i++)
+    {
+        SDL_Rect ir;
+        SnakePiece *p = pieces[i];
+        if(SDL_IntersectRect(&r, &p->bounds, &ir) == SDL_TRUE)
+        {
+            return true;
         }
     }
+    
+    return false;
 }
 
 void DirectionToPoint(SDL_Point &pt, direction_t &dir)
