@@ -1,5 +1,6 @@
 #include <iostream>
 #include "GameScene.hpp"
+#include "Snake.hpp"
 
 bool CTG::GameScene::Event(SDL_Event e)
 {
@@ -63,22 +64,30 @@ void CTG::GameScene::Update(int delta)
 
 void CTG::GameScene::Draw(SDL_Renderer *ren)
 {
-    SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-    SDL_RenderClear(ren);
-
-    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-    SDL_RenderFillRect(ren, &apple.bounds);
-
-    for(int i = 0; i < snake.pieces.size(); i++)
+    if(state == game_over)
     {
-        SnakePiece *piece = snake.pieces[i];
+        SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+        SDL_RenderClear(ren);
+    }
+    else if(state == running)
+    {
+        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+        SDL_RenderClear(ren);
 
-        //std::cout << "W: " << piece->collisionRect.w << std::endl;
-        //std::cout << "H: " << piece->collisionRect.h << std::endl;
+        SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+        SDL_RenderFillRect(ren, &apple.bounds);
 
-        SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-        SDL_RenderFillRect(ren, &piece->bounds);
-    }    
+        for(int i = 0; i < snake.pieces.size(); i++)
+        {
+            SnakePiece *piece = snake.pieces[i];
+
+            //std::cout << "W: " << piece->collisionRect.w << std::endl;
+            //std::cout << "H: " << piece->collisionRect.h << std::endl;
+
+            SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+            SDL_RenderFillRect(ren, &piece->bounds);
+        }
+    }
 }
 
 void CTG::GameScene::OnSceneStarted()
@@ -108,12 +117,21 @@ void CTG::GameScene::PlaceApple()
 {
     do
     {
-        apple.bounds.x = rand() % sceneWidth - CTG::SEGMENT_SIZE;
-        apple.bounds.y = rand() % sceneHeight - CTG::SEGMENT_SIZE;
-    } while(snake.CheckCollisionWithSnake(apple.bounds));
+        int randX = rand() % sceneWidth;
+        int randY = rand() % sceneHeight;
 
-    apple.bounds.w = CTG::SEGMENT_SIZE;
-    apple.bounds.h = CTG::SEGMENT_SIZE;
+        randX = std::max(randX, CTG::SEGMENT_SIZE);
+        randY = std::max(randY, CTG::SEGMENT_SIZE);
+
+        randX = std::min(randX, sceneWidth - CTG::SEGMENT_SIZE);
+        randY = std::min(randY, sceneHeight - CTG::SEGMENT_SIZE);
+
+        apple.bounds.x = randX;
+        apple.bounds.y = randY;
+        apple.bounds.w = CTG::SEGMENT_SIZE;
+        apple.bounds.h = CTG::SEGMENT_SIZE;
+        
+    } while(snake.CheckCollision(apple.bounds));   
 }
 
 bool CTG::GameScene::AppleEaten()
@@ -122,3 +140,4 @@ bool CTG::GameScene::AppleEaten()
     SDL_Rect ir;
     return SDL_IntersectRect(&head->bounds, &apple.bounds, &ir) == SDL_TRUE;
 }
+

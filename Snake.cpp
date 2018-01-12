@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "Snake.hpp"
+#include "Scene.hpp"
 #include "SDLHelpers.hpp"
 
 namespace CTG
@@ -13,7 +14,7 @@ void DirectionToPoint(SDL_Point &, direction_t &);
 
 void CTG::Snake::Grow()
 {
-    std::cout << "Grow()!" << std::endl;
+    //std::cout << "Grow()!" << std::endl;
 
     SnakePiece *piece = new CTG::SnakePiece;
     piece->sprite = nullptr;
@@ -39,9 +40,9 @@ void CTG::Snake::Grow()
         ptLocation->current_time = 0;
         ptLocation->max_time = 1000;
 
-        std::cout << "targetLoc from: (" << ptLocation->from_x
-            << ", " << ptLocation->from_y << ") to ("
-            << ptLocation->to_x << ", " << ptLocation->to_y << ")" << std::endl;
+        /* std::cout << "targetLoc from: (" << ptLocation->from_x
+                  << ", " << ptLocation->from_y << ") to ("
+                  << ptLocation->to_x << ", " << ptLocation->to_y << ")" << std::endl; */
     }
     else
     {
@@ -75,16 +76,15 @@ void CTG::Snake::Update(int delta)
     {
         SnakePiece *piece = pieces[i];
 
-        if (targetLocations[i]->to_x == -1 
-            || targetLocations[i]->to_y == -1)
+        if (targetLocations[i]->to_x == -1 || targetLocations[i]->to_y == -1)
         {
             //std::cout << "Piece: " << i << " not updating..." << std::endl;
             continue;
         }
 
-        targetLocations[i]->current_time = 
+        targetLocations[i]->current_time =
             std::min(targetLocations[i]->current_time + (velocity * delta),
-                     targetLocations[i]->max_time) ;
+                     targetLocations[i]->max_time);
 
         float t = targetLocations[i]->current_time / targetLocations[i]->max_time;
 
@@ -102,16 +102,11 @@ void CTG::Snake::Update(int delta)
                 << " target: (" << targetLocations[i].to_x << ", " << targetLocations[i].to_y
                 << ") ct: " << targetLocations[i].current_time << ", mt: " << targetLocations[i].max_time << std::endl; */
 
-        if(i == 0 && t >= 1)
+        if (i == 0 && t >= 1)
         {
             UpdateTargetLocations();
         }
     }
-}
-
-bool CTG::Snake::CheckDeath()
-{
-    return false;
 }
 
 void CTG::Snake::Move(direction_t direction)
@@ -156,7 +151,8 @@ void CTG::Snake::UpdateTargetLocations()
             targetLocations[i]->from_x = piece->bounds.x;
             targetLocations[i]->from_y = piece->bounds.y;
             targetLocations[i]->to_x = piece->bounds.x + (d.x * SEGMENT_SIZE);
-            targetLocations[i]->to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);;
+            targetLocations[i]->to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);
+            ;
 
             /* std::cout << "Updated. Current: (" << targetLocations[i].from_x << ", " << targetLocations[i].to_y 
                 << ", Set head target location to: " << targetLocations[i].to_x << "," << targetLocations[i].to_y 
@@ -170,11 +166,10 @@ void CTG::Snake::UpdateTargetLocations()
 
             SnakePiece *prev = pieces[i - 1];
 
-            targetLocations[i]->from_x = targetLocations[i-1]->from_x;
-            targetLocations[i]->from_y = targetLocations[i-1]->from_y;
-            targetLocations[i]->to_x = targetLocations[i-1]->to_x;
-            targetLocations[i]->to_y = targetLocations[i-1]->to_y;
-
+            targetLocations[i]->from_x = targetLocations[i - 1]->from_x;
+            targetLocations[i]->from_y = targetLocations[i - 1]->from_y;
+            targetLocations[i]->to_x = targetLocations[i - 1]->to_x;
+            targetLocations[i]->to_y = targetLocations[i - 1]->to_y;
         }
 
         targetLocations[i]->current_time = 0.0f;
@@ -182,18 +177,67 @@ void CTG::Snake::UpdateTargetLocations()
     }
 }
 
-bool CTG::Snake::CheckCollisionWithSnake(SDL_Rect& r)
+bool CTG::Snake::CheckCollision(SDL_Rect &r, bool includeHead)
 {
-    for(int i = 0; i < pieces.size(); i++)
+
+    for (int i = includeHead ? 0 : 1; i < pieces.size(); i++)
     {
         SDL_Rect ir;
         SnakePiece *p = pieces[i];
-        if(SDL_IntersectRect(&r, &p->bounds, &ir) == SDL_TRUE)
+        if (SDL_IntersectRect(&r, &p->bounds, &ir) == SDL_TRUE)
         {
             return true;
         }
     }
-    
+
+    return false;
+}
+
+bool CTG::Snake::CheckDeath()
+{
+    SnakePiece *head = pieces[0];
+
+    /* We've hit the walls. Ouch! */
+    if (head->bounds.x > CTG::Scene::sceneWidth 
+        || head->bounds.y > CTG::Scene::sceneHeight 
+        || head->bounds.x <= 0 
+        || head->bounds.y <= 0)
+    {
+        return true;
+    }
+    else if (pieces.size() > 1)
+    {
+        /* Check if a multi-segmented snake
+            has bitten himself. */
+
+        SDL_Rect iRect;
+        int intersectAreaThreshold = 250;
+
+        for (int i = 1; i < pieces.size(); i++)
+        {
+            if(targetLocations[i]->to_x == -1
+                || targetLocations[i]->to_x == -1)
+            {
+                continue;
+            }
+
+            SnakePiece *other = pieces[i];
+            SDL_bool result = SDL_IntersectRect(&head->bounds, &other->bounds, &iRect);
+
+            if (result == SDL_TRUE)
+            {
+                int intersect = iRect.w * iRect.h;
+
+                if (intersect > intersectAreaThreshold)
+                {
+                    std::cout << "Intersect: " << intersect << ", dead!";
+                    return true;
+                }
+                //std::cout << i << " intersection: w: " << iRect.w << ", h: " << iRect.h << std::endl;
+            }
+        }
+    }
+
     return false;
 }
 

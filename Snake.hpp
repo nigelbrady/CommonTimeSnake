@@ -49,6 +49,6 @@ namespace CTG
             void Update(int delta);
             void Grow();
             bool CheckDeath();
-            bool CheckCollisionWithSnake(SDL_Rect&);
+            bool CheckCollision(SDL_Rect& rect, bool includeHead=true);
     };
 }
