@@ -36,7 +36,7 @@ class GameScene : public Scene
   public:
     GameScene() : Scene("GameScene")
     {
-        ResetGame();
+        
     }
 
     bool Event(SDL_Event e);

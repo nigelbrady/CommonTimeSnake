@@ -18,7 +18,7 @@ void CTG::Snake::Grow()
     SnakePiece *piece = new CTG::SnakePiece;
     piece->sprite = nullptr;
 
-    target_location ptLocation;
+    target_location *ptLocation = new target_location;
 
     if (pieces.empty())
     {
@@ -32,16 +32,16 @@ void CTG::Snake::Grow()
         SDL_Point d;
         DirectionToPoint(d, direction);
 
-        ptLocation.from_x = piece->bounds.x;
-        ptLocation.from_y = piece->bounds.y;
-        ptLocation.to_x = piece->bounds.x + d.x * SEGMENT_SIZE;
-        ptLocation.to_y = piece->bounds.y + d.y * SEGMENT_SIZE;
-        ptLocation.current_time = 0;
-        ptLocation.max_time = 1000;
+        ptLocation->from_x = piece->bounds.x;
+        ptLocation->from_y = piece->bounds.y;
+        ptLocation->to_x = piece->bounds.x + d.x * SEGMENT_SIZE;
+        ptLocation->to_y = piece->bounds.y + d.y * SEGMENT_SIZE;
+        ptLocation->current_time = 0;
+        ptLocation->max_time = 1000;
 
-        std::cout << "targetLoc from: (" << ptLocation.from_x
-            << ", " << ptLocation.from_y << ") to ("
-            << ptLocation.to_x << ", " << ptLocation.to_y << ")" << std::endl;
+        std::cout << "targetLoc from: (" << ptLocation->from_x
+            << ", " << ptLocation->from_y << ") to ("
+            << ptLocation->to_x << ", " << ptLocation->to_y << ")" << std::endl;
     }
     else
     {
@@ -54,10 +54,10 @@ void CTG::Snake::Grow()
         piece->x_pos_float = piece->bounds.x;
         piece->y_pos_float = piece->bounds.y;
 
-        ptLocation.from_x = -1;
-        ptLocation.from_y = -1;
-        ptLocation.to_x = -1;
-        ptLocation.to_y = -1;
+        ptLocation->from_x = -1;
+        ptLocation->from_y = -1;
+        ptLocation->to_x = -1;
+        ptLocation->to_y = -1;
     }
 
     pieces.push_back(piece);
@@ -75,38 +75,37 @@ void CTG::Snake::Update(int delta)
     {
         SnakePiece *piece = pieces[i];
 
-        if (targetLocations[i].to_x == -1 
-            || targetLocations[i].to_y == -1)
+        if (targetLocations[i]->to_x == -1 
+            || targetLocations[i]->to_y == -1)
         {
-            std::cout << "Piece: " << i << " not updating..." << std::endl;
+            //std::cout << "Piece: " << i << " not updating..." << std::endl;
             continue;
         }
-        
-        targetLocations[i].current_time = 
-            std::min(targetLocations[i].current_time + delta,
-                     targetLocations[i].max_time) ;
 
-        float t = targetLocations[i].current_time / targetLocations[i].max_time;
+        targetLocations[i]->current_time = 
+            std::min(targetLocations[i]->current_time + (velocity * delta),
+                     targetLocations[i]->max_time) ;
+
+        float t = targetLocations[i]->current_time / targetLocations[i]->max_time;
 
         float oldX = piece->x_pos_float;
         float oldY = piece->y_pos_float;
 
-        piece->x_pos_float = SDL_Lerp(targetLocations[i].from_x, targetLocations[i].to_x, t);
-        piece->y_pos_float = SDL_Lerp(targetLocations[i].from_y, targetLocations[i].to_y, t);
+        piece->x_pos_float = SDL_Lerp(targetLocations[i]->from_x, targetLocations[i]->to_x, t);
+        piece->y_pos_float = SDL_Lerp(targetLocations[i]->from_y, targetLocations[i]->to_y, t);
 
         piece->bounds.x = round(piece->x_pos_float);
         piece->bounds.y = round(piece->y_pos_float);
 
-        std::cout << "Piece: " << i << " from (" << oldX << ", " << oldY
+        /* std::cout << "Piece: " << i << " from (" << oldX << ", " << oldY
             << ") to (" << piece->x_pos_float << ", " << piece ->y_pos_float << ") "
                 << " target: (" << targetLocations[i].to_x << ", " << targetLocations[i].to_y
-                << ") ct: " << targetLocations[i].current_time << ", mt: " << targetLocations[i].max_time << std::endl;
+                << ") ct: " << targetLocations[i].current_time << ", mt: " << targetLocations[i].max_time << std::endl; */
 
         if(i == 0 && t >= 1)
         {
             UpdateTargetLocations();
         }
-        
     }
 }
 
@@ -145,7 +144,7 @@ void CTG::Snake::Move(direction_t direction)
 
 void CTG::Snake::UpdateTargetLocations()
 {
-    for (int i = pieces.size(); i >= 0; i--)
+    for (int i = pieces.size() - 1; i >= 0; i--)
     {
         if (i == 0)
         {
@@ -154,23 +153,31 @@ void CTG::Snake::UpdateTargetLocations()
             SDL_Point d;
             DirectionToPoint(d, direction);
 
-            targetLocations[i].from_x = piece->bounds.x;
-            targetLocations[i].from_y = piece->bounds.y;
-            targetLocations[i].to_x = piece->bounds.x + (d.x * SEGMENT_SIZE);
-            targetLocations[i].to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);;
-            targetLocations[i].current_time = 0.0f;
-            targetLocations[i].max_time = 1000.0f;
+            targetLocations[i]->from_x = piece->bounds.x;
+            targetLocations[i]->from_y = piece->bounds.y;
+            targetLocations[i]->to_x = piece->bounds.x + (d.x * SEGMENT_SIZE);
+            targetLocations[i]->to_y = piece->bounds.y + (d.y * SEGMENT_SIZE);;
+            targetLocations[i]->current_time = 0.0f;
+            targetLocations[i]->max_time = 1000.0f;
 
-            std::cout << "Updated. Current: (" << targetLocations[i].from_x << ", " << targetLocations[i].to_y 
+            /* std::cout << "Updated. Current: (" << targetLocations[i].from_x << ", " << targetLocations[i].to_y 
                 << ", Set head target location to: " << targetLocations[i].to_x << "," << targetLocations[i].to_y 
-                << ", direction: " << direction << ", dx: " << d.x << ", dy: " << d.y << std::endl;
+                << ", direction: " << direction << ", dx: " << d.x << ", dy: " << d.y << std::endl; */
         }
         else
         {
+            //std::cout << "i: " << i << std::endl;
+            //std::cout << "pieces.size(): " << pieces.size() << std::endl;
+            //std::cout << "targetLocations.size(): " << targetLocations.size() << std::endl;
+
             SnakePiece *prev = pieces[i - 1];
-            targetLocations[i] = targetLocations[i - 1];
-            targetLocations[i].current_time = 0.0f;
-            targetLocations[i].max_time = 1000.0f;
+
+            targetLocations[i]->from_x = targetLocations[i-1]->from_x;
+            targetLocations[i]->from_y = targetLocations[i-1]->from_y;
+            targetLocations[i]->to_x = targetLocations[i-1]->to_x;
+            targetLocations[i]->to_y = targetLocations[i-1]->to_y;
+            targetLocations[i]->current_time = 0.0f;
+            targetLocations[i]->max_time = 1000.0f;
         }
     }
 }

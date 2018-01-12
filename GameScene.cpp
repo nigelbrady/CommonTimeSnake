@@ -47,16 +47,6 @@ void CTG::GameScene::Update(int delta)
 {
     if(state == running)
     {
-        /* 
-        remainingCrawlTime -= (delta/1000.0f);
-
-        if(remainingCrawlTime <= 0)
-        {
-            snake.Move(snake.direction);
-            remainingCrawlTime = crawlTime;
-        }
-        */
-
         snake.Update(delta);
 
         if(snake.CheckDeath())
@@ -98,6 +88,7 @@ void CTG::GameScene::ResetGame()
 
     snake.direction = right;
     snake.pieces.clear();
+    snake.targetLocations.clear();
     snake.Grow();
     
     apples.clear();

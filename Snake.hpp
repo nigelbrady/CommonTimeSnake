@@ -37,11 +37,11 @@ namespace CTG
             int velocity;
             direction direction;
             std::vector<SnakePiece *> pieces;
-            std::vector<target_location> targetLocations;
+            std::vector<target_location *> targetLocations;
 
             Snake()
             {
-                velocity = 20;
+                velocity = 10;
                 pieces.reserve(10);
             }
 
