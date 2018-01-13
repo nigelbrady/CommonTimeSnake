@@ -15,22 +15,26 @@ bool CTG::GameScene::Event(SDL_Event e)
 
             case SDLK_w:
             case SDLK_UP:
-                snake.direction = up;
+                if(snake.direction != down)
+                    snake.direction = up;
                 return true;
 
             case SDLK_s:
             case SDLK_DOWN:
-                snake.direction = down;
+                if(snake.direction != up)
+                    snake.direction = down;
                 return true;
 
             case SDLK_a:
             case SDLK_LEFT:
-                snake.direction = left;
+                if(snake.direction != right)
+                    snake.direction = left;
                 return true;
 
             case SDLK_d:
             case SDLK_RIGHT:
-                snake.direction = right;
+                if(snake.direction != left)
+                    snake.direction = right;
                 return true;
 
             case SDLK_SPACE:
