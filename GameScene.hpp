@@ -22,13 +22,15 @@ class GameScene : public Scene
 {
   private:
     game_state state;
-    
+
     Snake snake;
 
     SDL_GameObject apple;
 
     void PlaceApple();
     bool AppleEaten();
+    
+    void DrawWalls(SDL_Renderer *ren);
     
   public:
     GameScene() : Scene("GameScene"){}

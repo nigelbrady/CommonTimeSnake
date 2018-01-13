@@ -78,6 +78,33 @@ void CTG::GameScene::Update(int delta)
     }
 }
 
+void CTG::GameScene::DrawWalls(SDL_Renderer *ren)
+{
+    int widthSegments = sceneWidth / CTG::SEGMENT_SIZE;
+    int heightSegments = sceneHeight / CTG::SEGMENT_SIZE;
+
+    SDL_Rect wR;
+    SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
+
+    for(int j = 0; j < heightSegments; j++)
+    {
+        for(int i = 0; i < widthSegments; i++)
+        {
+            if(i == 0 || i == widthSegments - 1 
+                || j== 0 || j == heightSegments -1)
+                {
+            
+                    wR.x = i * CTG::SEGMENT_SIZE;
+                    wR.y = j * CTG::SEGMENT_SIZE;
+                    wR.w = CTG::SEGMENT_SIZE;
+                    wR.h = CTG::SEGMENT_SIZE;
+
+                    SDL_RenderFillRect(ren, &wR);   
+                }
+        }
+    } 
+}
+
 void CTG::GameScene::Draw(SDL_Renderer *ren)
 {
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
@@ -91,12 +118,15 @@ void CTG::GameScene::Draw(SDL_Renderer *ren)
     }
     else if(state == paused)
     {
+        DrawWalls(ren);
         DrawTitleAndSubtitle(CTG::Resources::pausedText,
                              CTG::Resources::continueText,
                              ren);
     }
     else if(state == running)
     {
+        DrawWalls(ren);
+
         SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
         SDL_RenderFillRect(ren, &apple.bounds);
 
@@ -147,8 +177,8 @@ void CTG::GameScene::PlaceApple()
         randX = std::max(randX, CTG::SEGMENT_SIZE);
         randY = std::max(randY, CTG::SEGMENT_SIZE);
 
-        randX = std::min(randX, sceneWidth - CTG::SEGMENT_SIZE);
-        randY = std::min(randY, sceneHeight - CTG::SEGMENT_SIZE);
+        randX = std::min(randX, sceneWidth - 2 * CTG::SEGMENT_SIZE);
+        randY = std::min(randY, sceneHeight - 2 * CTG::SEGMENT_SIZE);
 
         apple.bounds.x = randX;
         apple.bounds.y = randY;

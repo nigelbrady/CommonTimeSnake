@@ -170,10 +170,10 @@ bool CTG::Snake::CheckDeath()
     SnakePiece *head = pieces[0];
 
     /* We've hit the walls. Ouch! */
-    if (head->bounds.x > CTG::Scene::sceneWidth 
-        || head->bounds.y > CTG::Scene::sceneHeight 
-        || head->bounds.x <= 0 
-        || head->bounds.y <= 0)
+    if (head->bounds.x > CTG::Scene::sceneWidth - 2 * CTG::SEGMENT_SIZE
+        || head->bounds.y > CTG::Scene::sceneHeight - 2 * CTG::SEGMENT_SIZE 
+        || head->bounds.x < CTG::SEGMENT_SIZE 
+        || head->bounds.y < CTG::SEGMENT_SIZE)
     {
         return true;
     }
