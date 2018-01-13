@@ -11,7 +11,7 @@
 
 const int DEFAULT_WIDTH = 640;
 const int DEFAULT_HEIGHT = 480;
-const std::string WINDOW_NAME = "Snake";
+const std::string WINDOW_NAME = "Common Time Snake";
 
 int main(int argc, char** argv)
 {

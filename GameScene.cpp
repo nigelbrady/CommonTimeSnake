@@ -131,8 +131,14 @@ void CTG::GameScene::PlaceApple()
 {
     do
     {
-        int randX = rand() % sceneWidth;
-        int randY = rand() % sceneHeight;
+        /* Generate apples only on
+           multiples of the segment size*/
+
+        int maxXIndex = sceneWidth / CTG::SEGMENT_SIZE;
+        int maxYIndex = sceneHeight / CTG::SEGMENT_SIZE;
+
+        int randX = (rand() % maxXIndex) * CTG::SEGMENT_SIZE;
+        int randY = (rand() % maxYIndex) * CTG::SEGMENT_SIZE;
 
         randX = std::max(randX, CTG::SEGMENT_SIZE);
         randY = std::max(randY, CTG::SEGMENT_SIZE);

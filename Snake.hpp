@@ -45,7 +45,6 @@ namespace CTG
                 pieces.reserve(10);
             }
 
-            void Move(direction_t direction);
             void Update(int delta);
             void Grow();
             bool CheckDeath();

@@ -109,34 +109,6 @@ void CTG::Snake::Update(int delta)
     }
 }
 
-void CTG::Snake::Move(direction_t direction)
-{
-    SDL_Point d;
-    DirectionToPoint(d, direction);
-
-    SnakePiece *head = pieces[0];
-
-    if (pieces.size() == 1)
-    {
-        head->x_pos_float += SEGMENT_SIZE * d.x;
-        head->y_pos_float += SEGMENT_SIZE * d.y;
-        head->bounds.x = (int)head->x_pos_float;
-        head->bounds.y = (int)head->y_pos_float;
-    }
-    else
-    {
-        SnakePiece *tail = pieces.back();
-        pieces.pop_back();
-
-        tail->x_pos_float = head->x_pos_float + SEGMENT_SIZE * d.x;
-        tail->y_pos_float = head->y_pos_float + SEGMENT_SIZE * d.y;
-        tail->bounds.x = tail->x_pos_float;
-        tail->bounds.y = tail->y_pos_float;
-
-        pieces.insert(pieces.begin(), tail);
-    }
-}
-
 void CTG::Snake::UpdateTargetLocations()
 {
     for (int i = pieces.size() - 1; i >= 0; i--)
