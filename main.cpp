@@ -50,6 +50,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if(!CTG::Resources::LoadResources(renderer))
+    {
+        std::cout << "Failed to load resources!" << std::endl;
+        CTG::FinishSDL(renderer, window);
+        return 1;
+    }
+
     time_t sTime;
     time(&sTime);
     srand(sTime);
@@ -95,6 +102,8 @@ int main(int argc, char** argv)
 
     delete CTG::Scene::titleScene;
     delete CTG::Scene::gameScene;
+
+    CTG::Resources::DestroyResources();
     CTG::FinishSDL(renderer, window);
     return 0;
 }

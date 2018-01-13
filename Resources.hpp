@@ -4,46 +4,44 @@
 
 namespace CTG
 {
-    class Resources
-    {
-        public:
-            SDL_Texture *snakeHead;
-            SDL_Texture *snakeBody;
-            SDL_Texture *grassTexture;
-            SDL_Texture *appleTexture;
-
-            SDL_Texture *titleText;
-            SDL_Texture *subTitleText;
-
-            SDL_Texture *scoreText;
-            SDL_Texture *pausedText;
-            SDL_Texture *gameOverText;
-
-            TTF_Font *largeFont;
-            TTF_Font *mediumFont;
-            TTF_Font *smallFont;
-
-            Resources();
-            ~Resources();
-
-            bool success;
-    };
-
-    const std::string SNAKE_HEAD = "snake_head.png";
-    const std::string SNAKE_BODY = "snake_body.png";
-    const std::string GRASS_TEXTURE = "grass_texture.png";
-    const std::string APPLE_TEXTURE = "apple_texture.png";
-    const std::string FONT_NAME = "font.ttf";
-    
     const int LARGE_FONT_SIZE = 64;
     const int MEDIUM_FONT_SIZE = 32;
     const int SMALL_FONT_SIZE = 24;
+    
+    const std::string FONT_NAME = "assets/sample.ttf";
 
-    Resources *res = nullptr;
+    const std::string TITLE_TEXT = "Snake!";
+    const std::string SUBTITLE_TEXT = "Press Space to play!";
 
-    bool LoadResources();
-    void DestroyResources();
+    const std::string PAUSED_TEXT = "Paused";
+    const std::string CONTINUE_TEXT = "Press Space to continue!";
 
-    bool LoadScenes();
-    void DestroyScenes();
+    const std::string GAME_OVER_TEXT = "Game Over!";
+    const std::string RESTART_TEXT = "Press space to restart, ESC to quit";
+
+    const SDL_Color TEXT_COLOR = { 255, 255, 255, 255 };
+
+    class Resources
+    {
+        private:
+            static bool OpenFonts();
+            static void CloseFonts();
+
+        public:
+            static SDL_Texture *titleText;
+            static SDL_Texture *subTitleText;
+
+            static SDL_Texture *pausedText;
+            static SDL_Texture *continueText;
+
+            static SDL_Texture *gameOverText;
+            static SDL_Texture *restartText;
+
+            static TTF_Font *largeFont;
+            static TTF_Font *mediumFont;
+            static TTF_Font *smallFont;
+
+            static bool LoadResources(SDL_Renderer *ren);
+            static void DestroyResources();
+    };
 }
