@@ -1,6 +1,7 @@
 #include <iostream>
 #include "GameScene.hpp"
 #include "Snake.hpp"
+#include "Resources.hpp"
 
 bool CTG::GameScene::Event(SDL_Event e)
 {
@@ -33,7 +34,18 @@ bool CTG::GameScene::Event(SDL_Event e)
                 return true;
 
             case SDLK_SPACE:
-                //snake.Grow();
+                if(state == running)
+                {
+                    state = paused;
+                }
+                else if(state == paused)
+                {
+                    state = running;
+                }
+                else if(state == game_over)
+                {
+                    ResetGame();
+                }
                 return true;
 
             default:
@@ -64,16 +76,23 @@ void CTG::GameScene::Update(int delta)
 
 void CTG::GameScene::Draw(SDL_Renderer *ren)
 {
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+    SDL_RenderClear(ren);
+
     if(state == game_over)
     {
-        SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-        SDL_RenderClear(ren);
+        DrawTitleAndSubtitle(CTG::Resources::gameOverText,
+                             CTG::Resources::restartText,
+                             ren);
+    }
+    else if(state == paused)
+    {
+        DrawTitleAndSubtitle(CTG::Resources::pausedText,
+                             CTG::Resources::continueText,
+                             ren);
     }
     else if(state == running)
     {
-        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-        SDL_RenderClear(ren);
-
         SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
         SDL_RenderFillRect(ren, &apple.bounds);
 
@@ -98,11 +117,6 @@ void CTG::GameScene::OnSceneStarted()
 
 void CTG::GameScene::ResetGame()
 {
-    score = 0;
-
-    crawlTime = 0.10;
-    remainingCrawlTime = crawlTime;
-
     snake.direction = right;
     snake.pieces.clear();
     snake.targetLocations.clear();

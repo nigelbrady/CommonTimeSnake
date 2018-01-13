@@ -10,6 +10,12 @@ namespace CTG
         private:
             std::string name;
 
+        protected:
+        
+            void DrawTitleAndSubtitle(SDL_Texture *title,
+                                      SDL_Texture *subTitle,
+                                      SDL_Renderer *ren);
+
         public:
             Scene(std::string name);
 

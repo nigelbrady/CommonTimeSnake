@@ -22,13 +22,8 @@ class GameScene : public Scene
 {
   private:
     game_state state;
-
-    int score;
-
+    
     Snake snake;
-
-    float remainingCrawlTime;
-    float crawlTime;
 
     SDL_GameObject apple;
 

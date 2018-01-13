@@ -230,7 +230,7 @@ bool CTG::Snake::CheckDeath()
 
                 if (intersect > intersectAreaThreshold)
                 {
-                    std::cout << "Intersect: " << intersect << ", dead!";
+                    //std::cout << "Intersect: " << intersect << ", dead!";
                     return true;
                 }
                 //std::cout << i << " intersection: w: " << iRect.w << ", h: " << iRect.h << std::endl;

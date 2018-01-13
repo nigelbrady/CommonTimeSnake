@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "Scene.hpp"
+#include "SDLHelpers.hpp"
 
 int CTG::Scene::sceneWidth = 640;
 int CTG::Scene::sceneHeight = 480;
@@ -56,6 +57,28 @@ void CTG::Scene::OnSceneEnded()
 CTG::Scene::Scene(std::string n)
 {
     name = n;
+}
+
+void CTG::Scene::DrawTitleAndSubtitle(SDL_Texture *title, SDL_Texture *subTitle, SDL_Renderer *ren)
+{
+    /* Draw title, subtitle text */
+    int tW, tH;
+    int tX, tY;
+
+    int sW, sH;
+    int sX, sY;
+
+    SDL_QueryTexture(title, nullptr, nullptr, &tW, &tH);
+    SDL_QueryTexture(subTitle, nullptr, nullptr, &sW, &sH);
+
+    tX = sceneWidth / 2 - tW / 2;
+    tY = sceneHeight / 2 - tH / 2 - sH;
+
+    sX = sceneWidth / 2 - sW / 2;
+    sY = sceneHeight / 2 - sH / 2 + sH;
+
+    DrawTexture(title, ren, tX, tY);
+    DrawTexture(subTitle, ren, sX, sY);
 }
 
 
